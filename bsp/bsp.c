@@ -8,11 +8,15 @@
 #include "bsp.h"
 
 unsigned char LedEnable;
+TIM_HandleTypeDef Tim4Handle;
 
 void HAL_MspInit(void)
 {
 	LedInit(LED_ALL);
+	Tim4Init();
+	NvicInit();
 }
+
 void LedInit(unsigned short ledPos)
 {
 	GPIO_InitTypeDef portInit;
@@ -51,4 +55,23 @@ void LedToogle(unsigned short ledPos)
 	if(LedEnable) HAL_GPIO_TogglePin(LED_PORT, ledPos);
 }
 
+void Tim4Init()
+{
+	__TIM4_CLK_ENABLE();
 
+	Tim4Handle.Instance = TIM4;
+	Tim4Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+	Tim4Handle.Init.CounterMode=TIM_COUNTERMODE_UP;
+	Tim4Handle.Init.Prescaler=41999;
+	Tim4Handle.Init.Period=999;
+
+	//?????
+	HAL_TIM_Base_Init(&Tim4Handle);
+}
+
+void NvicInit()
+{
+	HAL_NVIC_SetPriority(TIM4_IRQn,0,1);
+	HAL_NVIC_EnableIRQ(TIM4_IRQn);
+	HAL_TIM_Base_Start_IT(&Tim4Handle);
+}

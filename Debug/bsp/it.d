@@ -60,7 +60,7 @@ bsp/it.o: ../bsp/it.c ../bsp/bsp.h ../system/include/cmsis/stm32f4xx.h \
  ../system/include/stm32f4-hal/stm32f4xx_ll_usb.h \
  ../system/include/stm32f4-hal/stm32f4xx_hal_pcd_ex.h \
  ../system/include/stm32f4-hal/stm32f4xx_hal_hcd.h \
- ../system/include/diag/Trace.h
+ ../system/include/diag/Trace.h ../bsp/it.h
 
 ../bsp/bsp.h:
 
@@ -191,3 +191,5 @@ bsp/it.o: ../bsp/it.c ../bsp/bsp.h ../system/include/cmsis/stm32f4xx.h \
 ../system/include/stm32f4-hal/stm32f4xx_hal_hcd.h:
 
 ../system/include/diag/Trace.h:
+
+../bsp/it.h:

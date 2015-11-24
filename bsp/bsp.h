@@ -28,5 +28,8 @@ void LedOff (unsigned short ledPos);
 void LedSet (unsigned short ledPos, unsigned short value);
 void LedToogle(unsigned short ledPos);
 
+void Tim4Init();
+
 extern unsigned char LedEnable;
+extern TIM_HandleTypeDef Tim4Handle;
 #endif /* BSP_H_ */
