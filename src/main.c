@@ -10,11 +10,11 @@
 int
 main(int argc, char* argv[])
 {
-	//LedOn(LED_ALL);
+	LedOn(LED_BLUE|LED_GREEN|LED_ORANGE|LED_RED);
 	while (1)
     {
-		HAL_Delay(5000);
-		LedToogle(LED_ORANGE);
+		HAL_Delay(600);
+		LedToggle(LED_BLUE|LED_GREEN|LED_ORANGE);
     }
 }
 

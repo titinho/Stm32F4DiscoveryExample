@@ -26,7 +26,7 @@ void LedInit(unsigned short ledPos);
 void LedOn (unsigned short ledPos);
 void LedOff (unsigned short ledPos);
 void LedSet (unsigned short ledPos, unsigned short value);
-void LedToogle(unsigned short ledPos);
+void LedToggle(unsigned short ledPos);
 
 //void Tim4Init();
 

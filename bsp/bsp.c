@@ -15,8 +15,7 @@ void HAL_MspInit(void)
 {
 	LedInit(LED_ALL);
 	Tim4Init();
-	SpiInit();
-	NvicInit();
+	//SpiInit();
 }
 
 void LedInit(unsigned short ledPos)
@@ -50,7 +49,7 @@ void LedSet (unsigned short ledPos, unsigned short value)
 {
 	if (!(ledPos & LED_ALL)) assert_param(ledPos);
 }
-void LedToogle(unsigned short ledPos)
+void LedToggle(unsigned short ledPos)
 {
 	if (!(ledPos & LED_ALL)) assert_param(ledPos);
 
@@ -67,22 +66,25 @@ void Tim4Init()
 	Tim4Handle.Init.Prescaler=41999;
 	Tim4Handle.Init.Period=999;
 
-	//?????
+	HAL_NVIC_SetPriority(TIM4_IRQn,4,0);
+	HAL_NVIC_EnableIRQ(TIM4_IRQn);
 	HAL_TIM_Base_Init(&Tim4Handle);
+	HAL_TIM_Base_Start_IT(&Tim4Handle);
 }
 
 void NvicInit()
 {
-	HAL_NVIC_SetPriority(TIM4_IRQn,0,1);
-	HAL_NVIC_SetPriority(SPI2_IRQn,0,2);
-	HAL_NVIC_EnableIRQ(TIM4_IRQn);
-	HAL_NVIC_EnableIRQ(SPI2_IRQn);
-	HAL_TIM_Base_Start_IT(&Tim4Handle);
+	//HAL_NVIC_SetPriority(TIM4_IRQn,0,1);
+	//HAL_NVIC_SetPriority(SPI2_IRQn,0,2);
+	//HAL_NVIC_EnableIRQ(TIM4_IRQn);
+	//HAL_NVIC_EnableIRQ(SPI2_IRQn);
+	//HAL_TIM_Base_Start_IT(&Tim4Handle);
 }
 
 /*
  * SPI mode 3
  */
+/*
 void SpiInit()
 {
 	__SPI2_CLK_ENABLE();
@@ -101,4 +103,4 @@ void SpiInit()
 	Spi2Handle.Init.Mode              = SPI_MODE_SLAVE;
 
 	HAL_SPI_Init(&Spi2Handle);
-}
+}*/
