@@ -9,11 +9,13 @@
 
 unsigned char LedEnable;
 TIM_HandleTypeDef Tim4Handle;
+SPI_HandleTypeDef Spi2Handle;
 
 void HAL_MspInit(void)
 {
 	LedInit(LED_ALL);
 	Tim4Init();
+	SpiInit();
 	NvicInit();
 }
 
@@ -72,6 +74,31 @@ void Tim4Init()
 void NvicInit()
 {
 	HAL_NVIC_SetPriority(TIM4_IRQn,0,1);
+	HAL_NVIC_SetPriority(SPI2_IRQn,0,2);
 	HAL_NVIC_EnableIRQ(TIM4_IRQn);
+	HAL_NVIC_EnableIRQ(SPI2_IRQn);
 	HAL_TIM_Base_Start_IT(&Tim4Handle);
+}
+
+/*
+ * SPI mode 3
+ */
+void SpiInit()
+{
+	__SPI2_CLK_ENABLE();
+
+	Spi2Handle.Instance               = SPI2;
+	Spi2Handle.Init.BaudRatePrescaler = 256;
+	Spi2Handle.Init.Direction         = SPI_DIRECTION_2LINES;
+	Spi2Handle.Init.CLKPolarity       = SPI_POLARITY_HIGH;
+	Spi2Handle.Init.CLKPhase          = SPI_PHASE_1EDGE;
+	Spi2Handle.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLED;
+	Spi2Handle.Init.CRCPolynomial     = 7;
+	Spi2Handle.Init.DataSize          = SPI_DATASIZE_8BIT;
+	Spi2Handle.Init.FirstBit          = SPI_FIRSTBIT_MSB;
+	Spi2Handle.Init.NSS               = SPI_NSS_SOFT;
+	Spi2Handle.Init.TIMode            = SPI_TIMODE_DISABLED;
+	Spi2Handle.Init.Mode              = SPI_MODE_SLAVE;
+
+	HAL_SPI_Init(&Spi2Handle);
 }
