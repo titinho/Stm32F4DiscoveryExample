@@ -8,14 +8,27 @@
 #include "bsp.h"
 
 unsigned char LedEnable;
+
 TIM_HandleTypeDef Tim4Handle;
 SPI_HandleTypeDef Spi2Handle;
+GPIO_InitTypeDef GpioPushButtonInitTypeDef;
+GPIO_InitTypeDef GpioSpi2InitTypeDef;
+
+/* Buffer used for transmission */
+uint8_t aTxMasterBuffer[] = "SPI - MASTER - Transmit message";
+uint8_t aTxSlaveBuffer[]  = "SPI - SLAVE - Transmit message ";
+/* Buffer used for reception */
+#define DATA_LENGTH 1024
+uint8_t aRxBuffer[DATA_LENGTH];
+
 
 void HAL_MspInit(void)
 {
 	LedInit(LED_ALL);
 	Tim4Init();
-	//SpiInit();
+	Spi2Init();
+	GpioPushButtonInit();
+	GpioSpi2Init();
 }
 
 void LedInit(unsigned short ledPos)
@@ -64,12 +77,36 @@ void Tim4Init()
 	Tim4Handle.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
 	Tim4Handle.Init.CounterMode=TIM_COUNTERMODE_UP;
 	Tim4Handle.Init.Prescaler=41999;
-	Tim4Handle.Init.Period=999;
+	//Tim4Handle.Init.Period=999;
+	Tim4Handle.Init.Period=1998;
 
 	HAL_NVIC_SetPriority(TIM4_IRQn,4,0);
 	HAL_NVIC_EnableIRQ(TIM4_IRQn);
 	HAL_TIM_Base_Init(&Tim4Handle);
 	HAL_TIM_Base_Start_IT(&Tim4Handle);
+}
+
+void GpioPushButtonInit()
+{
+	__GPIOA_CLK_ENABLE();
+
+	GpioPushButtonInitTypeDef.Mode = GPIO_MODE_IT_FALLING;
+	GpioPushButtonInitTypeDef.Pull = GPIO_NOPULL;
+	GpioPushButtonInitTypeDef.Pin  = GPIO_PIN_0;
+
+	HAL_GPIO_Init(GPIOA,&GpioPushButtonInitTypeDef);
+
+	HAL_NVIC_SetPriority(EXTI0_IRQn,2,0);
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
+void GpioSpi2Init()
+{
+	__GPIOB_CLK_ENABLE();
+
+	GpioSpi2InitTypeDef.Mode = GPIO_MODE_IT_FALLING;
+	GpioSpi2InitTypeDef.Pull = GPIO_NOPULL;
+	GpioSpi2InitTypeDef.Pin  = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
 }
 
 void NvicInit()
@@ -84,13 +121,34 @@ void NvicInit()
 /*
  * SPI mode 3
  */
-/*
-void SpiInit()
+void Spi2Init()
 {
 	__SPI2_CLK_ENABLE();
+	__GPIOB_CLK_ENABLE();
+
+	/*
+	SPIx_SCK_GPIO_CLK_ENABLE();
+	SPIx_MISO_GPIO_CLK_ENABLE();
+	SPIx_MOSI_GPIO_CLK_ENABLE();*/
+
+	GpioSpi2InitTypeDef.Pin       = GPIO_PIN_13;
+	GpioSpi2InitTypeDef.Mode      = GPIO_MODE_AF_PP;
+	GpioSpi2InitTypeDef.Pull      = GPIO_PULLDOWN;
+	GpioSpi2InitTypeDef.Speed     = GPIO_SPEED_FAST;
+	GpioSpi2InitTypeDef.Alternate = GPIO_AF5_SPI2;
+	HAL_GPIO_Init(GPIOB, &GpioSpi2InitTypeDef);
+
+	/* SPI MISO GPIO pin configuration  */
+	GpioSpi2InitTypeDef.Pull      = GPIO_PULLUP;
+	GpioSpi2InitTypeDef.Pin       = GPIO_PIN_14;
+	HAL_GPIO_Init(GPIOB, &GpioSpi2InitTypeDef);
+
+	/* SPI MOSI GPIO pin configuration  */
+	GpioSpi2InitTypeDef.Pin       = GPIO_PIN_15;
+	HAL_GPIO_Init(GPIOB, &GpioSpi2InitTypeDef);
 
 	Spi2Handle.Instance               = SPI2;
-	Spi2Handle.Init.BaudRatePrescaler = 256;
+	Spi2Handle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
 	Spi2Handle.Init.Direction         = SPI_DIRECTION_2LINES;
 	Spi2Handle.Init.CLKPolarity       = SPI_POLARITY_HIGH;
 	Spi2Handle.Init.CLKPhase          = SPI_PHASE_1EDGE;
@@ -103,4 +161,6 @@ void SpiInit()
 	Spi2Handle.Init.Mode              = SPI_MODE_SLAVE;
 
 	HAL_SPI_Init(&Spi2Handle);
-}*/
+
+
+}

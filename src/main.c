@@ -13,8 +13,8 @@ main(int argc, char* argv[])
 	LedOn(LED_BLUE|LED_GREEN|LED_ORANGE|LED_RED);
 	while (1)
     {
-		HAL_Delay(600);
-		LedToggle(LED_BLUE|LED_GREEN|LED_ORANGE);
+		HAL_Delay(2000);
+		LedToggle(LED_BLUE|LED_ORANGE);
     }
 }
 

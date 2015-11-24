@@ -28,7 +28,10 @@ void LedOff (unsigned short ledPos);
 void LedSet (unsigned short ledPos, unsigned short value);
 void LedToggle(unsigned short ledPos);
 
-//void Tim4Init();
+void Tim4Init();
+void Spi2Init();
+void GpioPushButtonInit();
+void GpioSpi2Init();
 
 extern unsigned char LedEnable;
 extern TIM_HandleTypeDef Tim4Handle;
